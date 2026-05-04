@@ -34,7 +34,14 @@ export function FeaturedDeals() {
                 <div className="absolute top-4 left-4 brutal-border bg-primary text-white px-3 py-1 font-bold uppercase text-xs z-10 brutal-shadow">
                   Sale!
                 </div>
-                <Image src={product.image} alt={product.name} width={600} height={400} className="w-full h-48 object-contain mix-blend-darken dark:mix-blend-normal hover:scale-105 transition-transform" />
+                {product.inStock === false && (
+                  <div className="absolute inset-0 bg-[var(--bg)]/60 z-10 flex items-center justify-center p-4">
+                    <div className="brutal-border bg-destructive text-white px-4 py-2 font-display font-black uppercase text-sm -rotate-6 brutal-shadow-sm">
+                      Sold Out
+                    </div>
+                  </div>
+                )}
+                <Image src={product.image} alt={product.name} width={600} height={400} className={`w-full h-48 object-contain mix-blend-darken dark:mix-blend-normal hover:scale-105 transition-transform ${product.inStock === false ? 'grayscale' : ''}`} />
               </Link>
               <div className="p-6 flex flex-col justify-between space-y-4">
                 <div>
@@ -50,16 +57,20 @@ export function FeaturedDeals() {
                 <div className="flex items-center justify-between pt-4">
                   <div className="font-display font-black text-2xl">₱{product.price.toLocaleString()}</div>
                   <Button
-                    size="icon"
+                    disabled={product.inStock === false}
                     onClick={(e) => {
                       e.preventDefault();
-                      handleAddToCart(product);
+                      if (product.inStock !== false) handleAddToCart(product);
                     }}
-                    className={`brutal-btn rounded-none h-12 w-12 border-3 transition-all relative z-10 ${
-                      addedId === product.id ? 'bg-green-600 hover:bg-green-600' : ''
+                    className={`brutal-btn rounded-none h-12 px-4 border-3 transition-all relative z-10 ${
+                      product.inStock === false
+                        ? 'opacity-80 cursor-not-allowed bg-zinc-400 border-zinc-500 shadow-none text-white'
+                        : addedId === product.id ? 'bg-green-600 hover:bg-green-600' : 'w-12'
                     }`}
                   >
-                    {addedId === product.id ? (
+                    {product.inStock === false ? (
+                      <span className="text-xs font-bold uppercase">Sold Out</span>
+                    ) : addedId === product.id ? (
                       <Check className="h-5 w-5" />
                     ) : (
                       <ShoppingCart className="h-5 w-5" />

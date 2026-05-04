@@ -68,7 +68,7 @@ export default function ContactPage() {
     {
       icon: <MapPin className="h-7 w-7" />,
       label: 'Find Us',
-      value: 'EFZ Bldg. Iñigo Street, Bo. Obero, Brgy 18-B Poblacion, Davao City, Philippines 8000',
+      value: 'EFZ Bldg. Iñigo Street, Bo. Obrero, Brgy 18-B Poblacion, Davao City, Philippines 8000',
       accent: 'bg-primary',
     },
     {
@@ -104,7 +104,7 @@ export default function ContactPage() {
         {/* ─── HERO ──────────────────────────────────────────── */}
         <div className="pt-16 pb-12 border-b-8 border-[var(--border)] mb-16 flex flex-col gap-6">
           <div className="inline-block transform -rotate-1">
-            <h1 className="font-display font-black text-6xl md:text-9xl uppercase tracking-tighter leading-none">
+            <h1 className="font-display font-black text-5xl md:text-7xl uppercase tracking-tighter leading-none">
               Contact<span className="text-primary">.</span>
             </h1>
           </div>

@@ -361,55 +361,70 @@ function ShopContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {paginatedProducts.map((product) => (
                 <div key={product.id} className="brutal-card flex flex-col h-full group relative">
-                  <Link href={`/product/${product.id}`} className="relative p-6 border-b-3 border-[var(--border)] overflow-hidden flex-grow bg-white dark:bg-zinc-900 block">
-                    {product.isDeal && (
-                      <div className="absolute top-4 left-4 brutal-border bg-primary text-white px-3 py-1 font-bold uppercase text-xs z-10 brutal-shadow">
-                        Deal
+                    <Link href={`/product/${product.id}`} className="relative p-6 border-b-3 border-[var(--border)] overflow-hidden flex-grow bg-white dark:bg-zinc-900 block">
+                      {product.isDeal && (
+                        <div className="absolute top-4 left-4 brutal-border bg-primary text-white px-3 py-1 font-bold uppercase text-xs z-10 brutal-shadow">
+                          Deal
+                        </div>
+                      )}
+                      {product.inStock === false && (
+                        <div className="absolute inset-0 bg-[var(--bg)]/60 z-10 flex items-center justify-center p-4">
+                          <div className="brutal-border bg-destructive text-white px-4 py-2 font-display font-black uppercase text-sm -rotate-6 brutal-shadow-sm">
+                            Sold Out
+                          </div>
+                        </div>
+                      )}
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className={`w-full h-40 object-contain group-hover:scale-110 transition-transform duration-500 will-change-transform mix-blend-multiply dark:mix-blend-screen ${product.inStock === false ? 'grayscale' : ''}`}
+                      />
+                    </Link>
+                    <div className="p-5 flex flex-col justify-between space-y-4 bg-[var(--bg)]">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-primary">{product.category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider opacity-50">• {product.brand}</span>
+                        </div>
+                        <Link href={`/product/${product.id}`} className="after:absolute after:inset-0 after:z-0">
+                          <h3 className="font-display font-bold text-lg uppercase leading-tight mt-1 group-hover:text-primary transition-colors line-clamp-2" title={product.name}>
+                            {product.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xs mt-2 opacity-70 font-mono truncate">{product.specs}</p>
                       </div>
-                    )}
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-40 object-contain group-hover:scale-110 transition-transform duration-500 will-change-transform mix-blend-multiply dark:mix-blend-screen"
-                    />
-                  </Link>
-                  <div className="p-5 flex flex-col justify-between space-y-4 bg-[var(--bg)]">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{product.category}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider opacity-50">• {product.brand}</span>
-                      </div>
-                      <Link href={`/product/${product.id}`} className="after:absolute after:inset-0 after:z-0">
-                        <h3 className="font-display font-bold text-lg uppercase leading-tight mt-1 group-hover:text-primary transition-colors line-clamp-2" title={product.name}>
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className="text-xs mt-2 opacity-70 font-mono truncate">{product.specs}</p>
-                    </div>
-                    <div className="flex flex-col space-y-3 pt-2">
-                      <div className="font-display font-black text-xl">₱{product.price.toLocaleString()}</div>
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAddToCart(product);
-                        }}
-                        className={`w-full brutal-btn py-6 flex items-center justify-center space-x-2 rounded-none transition-all relative z-10 ${addedId === product.id ? 'bg-green-600 hover:bg-green-600' : ''
+                      <div className="flex flex-col space-y-3 pt-2">
+                        <div className="font-display font-black text-xl">₱{product.price.toLocaleString()}</div>
+                        <Button
+                          disabled={product.inStock === false}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (product.inStock !== false) {
+                              handleAddToCart(product);
+                            }
+                          }}
+                          className={`w-full brutal-btn py-6 flex items-center justify-center space-x-2 rounded-none transition-all relative z-10 ${
+                            product.inStock === false 
+                              ? 'opacity-80 cursor-not-allowed bg-zinc-400 border-zinc-500 shadow-none hover:translate-x-0 hover:translate-y-0 text-white' 
+                              : addedId === product.id ? 'bg-green-600 hover:bg-green-600' : ''
                           }`}
-                      >
-                        {addedId === product.id ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            <span>Added!</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Add To Cart</span>
-                            <ShoppingCart className="h-4 w-4" />
-                          </>
-                        )}
-                      </Button>
+                        >
+                          {product.inStock === false ? (
+                            <span>Sold Out</span>
+                          ) : addedId === product.id ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              <span>Added!</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Add To Cart</span>
+                              <ShoppingCart className="h-4 w-4" />
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
                 </div>
               ))}
             </div>

@@ -8,7 +8,7 @@ const BRAND_LOGOS = [
   { name: 'Intel', url: '/brand_logos/intel-white.png' },
   { name: 'Nvidia', url: '/brand_logos/nvidia-white.png' },
   { name: 'ASUS', url: '/brand_logos/asus-white.png' },
-  { name: 'Corsair', url: '/brand_logos/corsair-white.png' },
+  { name: 'Corsair', url: '/brand_logos/corsair-white-1.png' },
   { name: 'Razer', url: '/brand_logos/razer-white.png' },
   { name: 'Logitech', url: '/brand_logos/logitech-white.png' },
   { name: 'Gigabyte', url: '/brand_logos/gigabyte-white-1.png' },

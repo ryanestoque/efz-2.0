@@ -93,7 +93,7 @@ export default function GalleryPage() {
             <Camera className="h-10 w-10 text-primary" />
             <span className="font-mono text-xl font-bold uppercase tracking-widest opacity-60">Visual Archive</span>
           </div> */}
-          <h1 className="font-display font-black text-6xl md:text-9xl uppercase tracking-tighter leading-none">
+          <h1 className="font-display font-black text-5xl md:text-7xl uppercase tracking-tighter leading-none">
             Gallery<span className="text-primary">.</span>
           </h1>
           {/* <div className="mt-6">

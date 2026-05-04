@@ -6,6 +6,7 @@ import { cn } from "../lib/utils";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -43,13 +44,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <Suspense fallback={<div className="h-20 bg-[var(--bg)] brutal-border-b" />}>
-            <Header />
-          </Suspense>
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Suspense fallback={<div className="h-20 bg-[var(--bg)] brutal-border-b" />}>
+              <Header />
+            </Suspense>
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -20,14 +20,8 @@ function ProductContent({ id }: { id: string }) {
     notFound();
   }
 
-  const stockCount = useMemo(() => {
-    if (product.id % 3 === 0) return 0;
-    if (product.id % 5 === 0) return 2;
-    return 15;
-  }, [product.id]);
-
-  const isOutOfStock = stockCount === 0;
-  const isLowStock = stockCount > 0 && stockCount <= 5;
+  const isOutOfStock = product.inStock === false;
+  const isLowStock = !isOutOfStock && product.id % 7 === 0; // Simulate low stock for some items
 
   // Related products: same category, excluding the current one
   const relatedProducts = useMemo(() => {
@@ -45,14 +39,13 @@ function ProductContent({ id }: { id: string }) {
 
   const handleAddToCart = useCallback(() => {
     if (isOutOfStock) return;
-    const q = typeof quantity === 'number' && quantity > 0 ? Math.min(quantity, stockCount) : 1;
+    const q = typeof quantity === 'number' && quantity > 0 ? quantity : 1;
     for (let i = 0; i < q; i++) {
       addItem(product);
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
-    if (quantity !== q) setQuantity(q);
-  }, [addItem, product, quantity, isOutOfStock, stockCount]);
+  }, [addItem, product, quantity, isOutOfStock]);
 
   const handleAddRelated = useCallback((p: Product) => {
     addItem(p);
@@ -87,12 +80,19 @@ function ProductContent({ id }: { id: string }) {
                 alt={product.name}
                 width={800}
                 height={800}
-                className="w-full h-full object-contain mix-blend-multiply dark:mix-blend-screen scale-90 hover:scale-100 transition-transform duration-500"
+                className={`w-full h-full object-contain mix-blend-multiply dark:mix-blend-screen scale-90 hover:scale-100 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-50' : ''}`}
               />
               {product.isDeal && (
                 <div className="absolute top-4 left-4 brutal-border bg-primary text-white px-4 py-2 font-display font-black uppercase text-sm brutal-shadow flex items-center gap-2">
                   <Tag className="h-4 w-4" />
                   Deal
+                </div>
+              )}
+              {isOutOfStock && (
+                <div className="absolute inset-0 flex items-center justify-center z-20">
+                  <div className="brutal-border bg-destructive text-white px-8 py-4 font-display font-black uppercase text-2xl -rotate-12 brutal-shadow">
+                    Sold Out
+                  </div>
                 </div>
               )}
             </div>
@@ -139,17 +139,17 @@ function ProductContent({ id }: { id: string }) {
                 {isOutOfStock ? (
                   <div className="flex items-center gap-2 text-red-500 bg-red-500/10 px-3 py-1.5 brutal-border border-red-500">
                     <PackageX className="h-4 w-4" />
-                    <span>Out of Stock</span>
+                    <span>Sold Out</span>
                   </div>
                 ) : isLowStock ? (
                   <div className="flex items-center gap-2 text-orange-500 bg-orange-500/10 px-3 py-1.5 brutal-border border-orange-500">
                     <AlertTriangle className="h-4 w-4" />
-                    <span>Low Stock: Only {stockCount} left</span>
+                    <span>Low Stock: Only a few left!</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-green-600 dark:text-green-500 bg-green-500/10 px-3 py-1.5 brutal-border border-green-500">
                     <PackageCheck className="h-4 w-4" />
-                    <span>In Stock ({stockCount})</span>
+                    <span>In Stock</span>
                   </div>
                 )}
               </div>
@@ -178,7 +178,7 @@ function ProductContent({ id }: { id: string }) {
                     } else {
                       const num = parseInt(val, 10);
                       if (!isNaN(num)) {
-                        setQuantity(Math.min(stockCount, num));
+                        setQuantity(num);
                       }
                     }
                   }}
@@ -191,8 +191,8 @@ function ProductContent({ id }: { id: string }) {
                   aria-label="Quantity"
                 />
                 <button
-                  disabled={isOutOfStock || (typeof quantity === 'number' && quantity >= stockCount)}
-                  onClick={() => setQuantity(q => Math.min(stockCount, (typeof q === 'number' ? q : 1) + 1))}
+                  disabled={isOutOfStock}
+                  onClick={() => setQuantity(q => (typeof q === 'number' ? q : 1) + 1)}
                   className="h-full px-3 sm:px-4 hover:bg-[var(--text)] hover:text-[var(--bg)] disabled:opacity-50 disabled:hover:bg-[var(--bg)] disabled:hover:text-[var(--text)] disabled:cursor-not-allowed transition-colors flex items-center justify-center border-l-2 border-[var(--border)]"
                 >
                   <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -202,9 +202,11 @@ function ProductContent({ id }: { id: string }) {
               <Button
                 disabled={isOutOfStock}
                 onClick={handleAddToCart}
-                className={`brutal-btn rounded-none h-12 sm:h-14 flex-1 text-sm sm:text-lg font-display font-bold uppercase flex items-center justify-center gap-2 sm:gap-3 px-2 sm:px-4 transition-all min-w-0 ${added ? 'bg-green-600 hover:bg-green-600 text-white' : ''} ${isOutOfStock ? 'opacity-50 cursor-not-allowed bg-[var(--border)] hover:bg-[var(--border)] text-[var(--text)]' : ''}`}
+                className={`brutal-btn rounded-none h-12 sm:h-14 flex-1 text-sm sm:text-lg font-display font-bold uppercase flex items-center justify-center gap-2 sm:gap-3 px-2 sm:px-4 transition-all min-w-0 ${added ? 'bg-green-600 hover:bg-green-600 text-white' : ''} ${isOutOfStock ? 'opacity-80 cursor-not-allowed bg-zinc-400 border-zinc-500 shadow-none hover:translate-x-0 hover:translate-y-0 text-white' : ''}`}
               >
-                {added ? (
+                {isOutOfStock ? (
+                  <span>Sold Out</span>
+                ) : added ? (
                   <>
                     <Check className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                     <span className="truncate">Added!</span>

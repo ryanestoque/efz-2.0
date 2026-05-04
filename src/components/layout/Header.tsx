@@ -1,12 +1,13 @@
 'use client';
 
 import { ALL_CATEGORIES, BRANDS, PRODUCTS } from '@/lib/data';
-import { ShoppingCart, User, Search, Menu, Moon, Sun, X } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, Moon, Sun, X, LogOut, Package, Settings } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 function SearchBar({ onSearchSubmit, isMobile = false }: { onSearchSubmit?: () => void, isMobile?: boolean }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,6 +99,63 @@ function SearchBar({ onSearchSubmit, isMobile = false }: { onSearchSubmit?: () =
   );
 }
 
+// ─── USER MENU ─────────────────────────────────────────────
+function UserMenu() {
+  const [open, setOpen] = useState(false);
+  const { user, isLoggedIn, logout } = useAuth();
+  const router = useRouter();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const menuItemCls = 'flex items-center gap-3 px-4 py-3 font-display font-bold uppercase text-sm tracking-wide border-b-3 last:border-b-0 border-[var(--border)] hover:bg-primary hover:text-white transition-colors w-full text-left';
+
+  return (
+    <div ref={ref} className="relative hidden min-[850px]:block">
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => setOpen(o => !o)}
+        className={`brutal-border border-2 rounded-none bg-[var(--bg)] hover:bg-primary hover:text-white transition-colors h-10 w-10 ${open ? 'bg-primary text-white' : ''}`}
+        aria-label="User account"
+      >
+        {isLoggedIn
+          ? <span className="font-display font-black text-sm">{user?.name?.[0]?.toUpperCase()}</span>
+          : <User className="h-5 w-5" />}
+      </Button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-3 w-56 bg-[var(--bg)] brutal-border brutal-shadow z-50 overflow-hidden">
+          {isLoggedIn ? (
+            <>
+              <div className="px-4 py-3 border-b-3 border-[var(--border)] bg-[var(--text)] text-[var(--bg)]">
+                <p className="font-display font-black uppercase leading-tight truncate">{user?.name}</p>
+                <p className="font-mono text-xs opacity-60 truncate">{user?.email}</p>
+              </div>
+              <Link href="/profile" onClick={() => setOpen(false)} className={menuItemCls}><User className="h-4 w-4" />My Profile</Link>
+              <Link href="/profile?tab=orders" onClick={() => setOpen(false)} className={menuItemCls}><Package className="h-4 w-4" />My Orders</Link>
+              <Link href="/profile?tab=settings" onClick={() => setOpen(false)} className={menuItemCls}><Settings className="h-4 w-4" />Settings</Link>
+              <button onClick={() => { logout(); setOpen(false); router.push('/'); }} className={`${menuItemCls} text-destructive hover:bg-destructive hover:text-white`}><LogOut className="h-4 w-4" />Sign Out</button>
+            </>
+          ) : (
+            <div className="p-4 space-y-3">
+              <p className="font-display font-black text-xs uppercase tracking-widest opacity-50 mb-3">My Account</p>
+              <Link href="/profile" onClick={() => setOpen(false)} className="brutal-btn block text-center px-4 py-3 text-sm rounded-none">Sign In</Link>
+              <Link href="/profile?tab=register" onClick={() => setOpen(false)} className="brutal-btn-ghost block text-center px-4 py-3 text-sm rounded-none">Create Account</Link>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Header() {
   const [isDark, setIsDark] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -108,6 +166,7 @@ export default function Header() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { totalItems } = useCart();
+  const { isLoggedIn, user: authUser, logout } = useAuth();
 
   const currentCategory = searchParams.get('category');
   const currentBrand = searchParams.get('brand');
@@ -243,13 +302,7 @@ export default function Header() {
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
 
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="hidden min-[850px]:flex brutal-border border-2 rounded-none bg-[var(--bg)] hover:bg-primary hover:text-white transition-colors h-10 w-10"
-            >
-              <User className="h-5 w-5" />
-            </Button>
+            <UserMenu />
 
             <Button 
               asChild
@@ -350,13 +403,25 @@ export default function Header() {
                 {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                 <span className="font-bold uppercase text-sm">{isDark ? 'Light' : 'Dark'}</span>
               </Button>
-              <Button 
-                variant="outline"
-                className="flex-1 flex h-auto rounded-none items-center justify-center p-3 brutal-border border-2 bg-[var(--bg)] hover:bg-primary hover:text-white transition-colors space-x-2"
-              >
-                <User className="h-5 w-5" />
-                <span className="font-bold uppercase text-sm">Account</span>
-              </Button>
+              {isLoggedIn ? (
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="w-8 h-8 bg-primary brutal-border flex items-center justify-center text-white font-display font-black text-sm shrink-0">{authUser?.name?.[0]?.toUpperCase()}</div>
+                    <div className="min-w-0">
+                      <p className="font-display font-black text-sm uppercase leading-none truncate">{authUser?.name}</p>
+                      <p className="font-mono text-xs opacity-50 truncate">{authUser?.email}</p>
+                    </div>
+                  </div>
+                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 px-2 py-2 brutal-border font-display font-bold text-xs uppercase tracking-wide hover:bg-primary hover:text-white transition-colors"><User className="h-3 w-3" />Profile</Link>
+                  <Link href="/profile?tab=orders" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 px-2 py-2 brutal-border font-display font-bold text-xs uppercase tracking-wide hover:bg-primary hover:text-white transition-colors"><Package className="h-3 w-3" />Orders</Link>
+                  <button onClick={() => { logout(); setIsMobileMenuOpen(false); router.push('/'); }} className="w-full flex items-center gap-2 px-2 py-2 brutal-border font-display font-bold text-xs uppercase tracking-wide text-destructive hover:bg-destructive hover:text-white transition-colors"><LogOut className="h-3 w-3" />Sign Out</button>
+                </div>
+              ) : (
+                <div className="flex-1 flex flex-col gap-2">
+                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="brutal-btn flex items-center justify-center gap-2 p-3 text-xs rounded-none"><User className="h-4 w-4" />Sign In</Link>
+                  <Link href="/profile?tab=register" onClick={() => setIsMobileMenuOpen(false)} className="brutal-btn-ghost flex items-center justify-center gap-2 p-3 text-xs rounded-none">Create Account</Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
