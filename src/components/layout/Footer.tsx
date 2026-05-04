@@ -39,7 +39,7 @@ export default function Footer() {
               <li>0943 611 0527</li>
               <li>efzdavaocomputersales@gmail.com</li>
               <li className="pt-4">
-                EFZ Bldg. Iñigo Street, <br />Bo. Obero, Brgy 18-B Poblacion, <br />Davao City, Philippines, 8000
+                EFZ Bldg. Iñigo Street, <br />Bo. Obrero, Brgy 18-B Poblacion, <br />Davao City, Philippines, 8000
               </li>
             </ul>
           </div>

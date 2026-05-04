@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { cn } from "../lib/utils";
 import Header from "@/components/layout/Header";
@@ -43,7 +44,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <CartProvider>
-          <Header />
+          <Suspense fallback={<div className="h-20 bg-[var(--bg)] brutal-border-b" />}>
+            <Header />
+          </Suspense>
           <main className="flex-grow">{children}</main>
           <Footer />
         </CartProvider>
