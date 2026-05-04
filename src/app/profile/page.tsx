@@ -335,10 +335,10 @@ function ProfileInner() {
           <div className="grid lg:grid-cols-[1fr_480px] gap-12 items-start">
             <div className="space-y-6">
               <div className="brutal-border brutal-shadow p-8 bg-[var(--bg)]">
-                <div className="bg-[var(--text)] text-[var(--bg)] px-6 py-4 border-b-3 border-[var(--border)] -mx-8 -mt-8 mb-8">
+                {/* <div className="bg-[var(--text)] text-[var(--bg)] px-6 py-4 border-b-3 border-[var(--border)] -mx-8 -mt-8 mb-8">
                   <h2 className="font-display font-black text-2xl uppercase tracking-tighter">Sign In or Register</h2>
                   <p className="font-mono text-xs opacity-70 mt-1 uppercase">Manage orders, track shipments, and more.</p>
-                </div>
+                </div> */}
                 <AuthForms initial={authDefault} />
               </div>
             </div>
