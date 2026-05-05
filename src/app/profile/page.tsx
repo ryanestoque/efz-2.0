@@ -305,6 +305,7 @@ function SettingsTab() {
 
   const handleLogout = () => {
     logout();
+    toast.success('Successfully signed out!');
     router.push('/');
   };
 

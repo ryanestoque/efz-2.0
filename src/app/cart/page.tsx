@@ -5,9 +5,23 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, totalItems, subtotal } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleCheckout = () => {
+    const saved = localStorage.getItem('efz-user');
+    if (!saved && !user) {
+      toast.error('Please login first to checkout.');
+      router.push('/profile?tab=login');
+    } else {
+      router.push('/checkout');
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -110,11 +124,9 @@ export default function Cart() {
               <span className="font-display font-black text-3xl">₱{subtotal.toLocaleString()}</span>
             </div>
 
-            <Button asChild className="brutal-btn w-full h-14 text-lg mb-4 flex items-center justify-center gap-2 group rounded-none">
-              <Link href="/checkout">
-                <span>Secure Checkout</span>
-                <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+            <Button onClick={handleCheckout} className="brutal-btn w-full h-14 text-lg mb-4 flex items-center justify-center gap-2 group rounded-none">
+              <span>Secure Checkout</span>
+              <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
 
             <Button asChild variant="outline" className="brutal-btn-ghost w-full h-12 rounded-none mb-4">

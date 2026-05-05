@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -22,6 +22,26 @@ export default function CheckoutPage() {
     address: user?.address || '',
     paymentMethod: 'cod',
   });
+
+  useEffect(() => {
+    const saved = localStorage.getItem('efz-user');
+    if (!saved && !user) {
+      toast.error('Please login first to checkout.');
+      router.push('/profile?tab=login');
+    }
+  }, [user, router]);
+
+  useEffect(() => {
+    if (user) {
+      setForm(p => ({
+        ...p,
+        name: user.name || p.name,
+        email: user.email || p.email,
+        phone: user.phone || p.phone,
+        address: user.address || p.address,
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
