@@ -146,8 +146,12 @@ function UserMenu() {
           ) : (
             <div className="p-4 space-y-3">
               <p className="font-display font-black text-xs uppercase tracking-widest opacity-50 mb-3">My Account</p>
-              <Link href="/profile" onClick={() => setOpen(false)} className="brutal-btn block text-center px-4 py-3 text-sm rounded-none">Sign In</Link>
-              <Link href="/profile?tab=register" onClick={() => setOpen(false)} className="brutal-btn-ghost block text-center px-4 py-3 text-sm rounded-none">Create Account</Link>
+              <Button asChild className="brutal-btn w-full px-4 py-3 h-auto text-sm rounded-none">
+                <Link href="/profile" onClick={() => setOpen(false)}>Sign In</Link>
+              </Button>
+              <Button asChild variant="outline" className="brutal-btn-ghost w-full px-4 py-3 h-auto text-sm rounded-none">
+                <Link href="/profile?tab=register" onClick={() => setOpen(false)}>Create Account</Link>
+              </Button>
             </div>
           )}
         </div>
@@ -418,8 +422,12 @@ export default function Header() {
                 </div>
               ) : (
                 <div className="flex-1 flex flex-col gap-2">
-                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="brutal-btn flex items-center justify-center gap-2 p-3 text-xs rounded-none"><User className="h-4 w-4" />Sign In</Link>
-                  <Link href="/profile?tab=register" onClick={() => setIsMobileMenuOpen(false)} className="brutal-btn-ghost flex items-center justify-center gap-2 p-3 text-xs rounded-none">Create Account</Link>
+                  <Button asChild className="brutal-btn w-full flex items-center justify-center gap-2 p-3 h-auto text-xs rounded-none">
+                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}><User className="h-4 w-4" />Sign In</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="brutal-btn-ghost w-full flex items-center justify-center gap-2 p-3 h-auto text-xs rounded-none">
+                    <Link href="/profile?tab=register" onClick={() => setIsMobileMenuOpen(false)}>Create Account</Link>
+                  </Button>
                 </div>
               )}
             </div>

@@ -33,6 +33,8 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
+  cancelOrder: (id: string) => void;
+  addOrder: (order: Order) => void;
 }
 
 export const MOCK_ORDERS: Order[] = [
@@ -67,6 +69,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
 
   useEffect(() => {
     try {
@@ -130,8 +133,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const cancelOrder = useCallback((id: string) => {
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'Cancelled' } : o));
+  }, []);
+
+  const addOrder = useCallback((order: Order) => {
+    setOrders(prev => [order, ...prev]);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, orders: MOCK_ORDERS, isLoggedIn: !!user, login, register, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, orders, isLoggedIn: !!user, login, register, logout, updateProfile, cancelOrder, addOrder }}>
       {children}
     </AuthContext.Provider>
   );

@@ -2,6 +2,7 @@
 
 import { Plus, Minus, Trash2, ChevronRight, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 
@@ -109,9 +110,11 @@ export default function Cart() {
               <span className="font-display font-black text-3xl">₱{subtotal.toLocaleString()}</span>
             </div>
 
-            <Button className="brutal-btn w-full h-14 text-lg mb-4 flex items-center justify-center gap-2 group rounded-none">
-              <span>Secure Checkout</span>
-              <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <Button asChild className="brutal-btn w-full h-14 text-lg mb-4 flex items-center justify-center gap-2 group rounded-none">
+              <Link href="/checkout">
+                <span>Secure Checkout</span>
+                <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
 
             <Button asChild variant="outline" className="brutal-btn-ghost w-full h-12 rounded-none mb-4">

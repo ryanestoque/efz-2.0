@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { User, Package, Settings, LogOut, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, MapPin, Phone, Mail, CalendarDays } from 'lucide-react';
 
 // ─── ORDER STATUS ─────────────────────────────────────────
@@ -28,17 +30,19 @@ function AuthForms({ initial }: { initial: 'login' | 'register' }) {
     e.preventDefault(); setError(''); setLoading(true);
     const res = await login(lf.email, lf.password);
     setLoading(false);
-    if (!res.success) { setError(res.error!); return; }
+    if (!res.success) { setError(res.error!); toast.error(res.error!); return; }
+    toast.success('Successfully signed in!');
     router.refresh();
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault(); setError(''); 
-    if (rf.password !== rf.confirm) { setError('Passwords do not match.'); return; }
+    if (rf.password !== rf.confirm) { setError('Passwords do not match.'); toast.error('Passwords do not match.'); return; }
     setLoading(true);
     const res = await register(rf.name, rf.email, rf.password);
     setLoading(false);
-    if (!res.success) { setError(res.error!); return; }
+    if (!res.success) { setError(res.error!); toast.error(res.error!); return; }
+    toast.success('Account created successfully!');
     router.refresh();
   };
 
@@ -86,9 +90,9 @@ function AuthForms({ initial }: { initial: 'login' | 'register' }) {
               </button>
             </div>
           </div>
-          <button type="submit" disabled={loading} className="brutal-btn w-full py-4 rounded-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <Button type="submit" disabled={loading} className="brutal-btn w-full py-4 h-auto rounded-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             {loading ? <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Signing in…</> : <><ArrowRight className="h-4 w-4" />Sign In</>}
-          </button>
+          </Button>
           <p className="text-center font-mono text-sm opacity-60">No account? <button type="button" onClick={() => setTab('register')} className="text-primary font-bold hover:underline">Create one</button></p>
         </form>
       ) : (
@@ -114,9 +118,9 @@ function AuthForms({ initial }: { initial: 'login' | 'register' }) {
             <label className={labelCls}>Confirm Password</label>
             <input type={showPw ? 'text' : 'password'} required value={rf.confirm} onChange={e => setRf(p => ({ ...p, confirm: e.target.value }))} placeholder="Re-enter password" className={inputCls} />
           </div>
-          <button type="submit" disabled={loading} className="brutal-btn w-full py-4 rounded-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <Button type="submit" disabled={loading} className="brutal-btn w-full py-4 h-auto rounded-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
             {loading ? <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Creating account…</> : <><ArrowRight className="h-4 w-4" />Create Account</>}
-          </button>
+          </Button>
           <p className="text-center font-mono text-sm opacity-60">Already have an account? <button type="button" onClick={() => setTab('login')} className="text-primary font-bold hover:underline">Sign in</button></p>
         </form>
       )}
@@ -130,15 +134,34 @@ function ProfileTab() {
   const [form, setForm] = useState({ name: user?.name || '', phone: user?.phone || '', address: user?.address || '' });
   const [saved, setSaved] = useState(false);
 
+  const [pwForm, setPwForm] = useState({ old: '', new: '', confirm: '' });
+  const [showPw, setShowPw] = useState(false);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     updateProfile(form);
     setSaved(true);
+    toast.success('Profile updated successfully!');
     setTimeout(() => setSaved(false), 2500);
   };
 
+  const handleSavePw = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pwForm.new !== pwForm.confirm) {
+      toast.error('New passwords do not match.');
+      return;
+    }
+    if (pwForm.new.length < 6) {
+      toast.error('Password must be at least 6 characters.');
+      return;
+    }
+    toast.success('Password changed successfully!');
+    setPwForm({ old: '', new: '', confirm: '' });
+  };
+
   return (
-    <form onSubmit={handleSave} className="space-y-6 max-w-lg">
+    <div className="space-y-12 max-w-lg">
+      <form onSubmit={handleSave} className="space-y-6">
       {/* Static info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="brutal-border p-4 flex items-center gap-3">
@@ -178,7 +201,7 @@ function ProfileTab() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button type="submit" className="brutal-btn px-8 py-3 rounded-none">Save Changes</button>
+        <Button type="submit" className="brutal-btn px-8 py-3 h-auto rounded-none">Save Changes</Button>
         {saved && (
           <div className="flex items-center gap-2 text-[#34C759]">
             <CheckCircle2 className="h-4 w-4" />
@@ -186,15 +209,40 @@ function ProfileTab() {
           </div>
         )}
       </div>
-    </form>
+      </form>
+
+      <div className="border-t-3 border-[var(--border)] pt-8">
+        <h3 className="font-display font-black text-xl uppercase tracking-tight mb-6">Change Password</h3>
+        <form onSubmit={handleSavePw} className="space-y-5">
+          <div className="space-y-2">
+            <label className="font-display font-bold text-xs uppercase tracking-widest opacity-60">Current Password</label>
+            <input type={showPw ? 'text' : 'password'} required value={pwForm.old} onChange={e => setPwForm(p => ({ ...p, old: e.target.value }))} className="brutal-input w-full" />
+          </div>
+          <div className="space-y-2">
+            <label className="font-display font-bold text-xs uppercase tracking-widest opacity-60">New Password</label>
+            <input type={showPw ? 'text' : 'password'} required value={pwForm.new} onChange={e => setPwForm(p => ({ ...p, new: e.target.value }))} placeholder="Min. 6 characters" className="brutal-input w-full" />
+          </div>
+          <div className="space-y-2">
+            <label className="font-display font-bold text-xs uppercase tracking-widest opacity-60">Confirm New Password</label>
+            <input type={showPw ? 'text' : 'password'} required value={pwForm.confirm} onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))} className="brutal-input w-full" />
+          </div>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer font-mono text-sm opacity-80 hover:opacity-100">
+              <input type="checkbox" checked={showPw} onChange={e => setShowPw(e.target.checked)} className="accent-primary" /> Show passwords
+            </label>
+            <Button type="submit" className="brutal-btn px-6 py-2 h-auto rounded-none text-sm">Update Password</Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
 // ─── ORDERS TAB ───────────────────────────────────────────
 function OrdersTab() {
-  const { orders } = useAuth();
+  const { orders, cancelOrder } = useAuth();
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${orders.length >= 4 ? 'max-h-[700px] overflow-y-auto pr-2' : ''}`}>
       {orders.length === 0 ? (
         <div className="brutal-border p-16 text-center">
           <Package className="h-16 w-16 mx-auto opacity-20 mb-4" />
@@ -227,6 +275,20 @@ function OrdersTab() {
                   </div>
                 ))}
               </div>
+              {order.status === 'Processing' && (
+                <div className="border-t-3 border-dashed border-[var(--border)] pt-4 mt-4 flex justify-end">
+                  <Button 
+                    onClick={() => {
+                      cancelOrder(order.id);
+                      toast.success(`Order ${order.id} cancelled successfully.`);
+                    }}
+                    variant="outline"
+                    className="brutal-btn-ghost text-destructive border-destructive rounded-none h-9 text-xs hover:bg-destructive hover:text-white"
+                  >
+                    Cancel Order
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -272,15 +334,15 @@ function SettingsTab() {
       <div className="brutal-border p-6 space-y-4 border-destructive">
         <h3 className="font-display font-black text-lg uppercase tracking-tight text-destructive border-b-3 border-destructive pb-3">Danger Zone</h3>
         {!showConfirm ? (
-          <button onClick={() => setShowConfirm(true)} className="brutal-btn-ghost border-destructive text-destructive shadow-[4px_4px_0px_0px_#ef4444] px-6 py-3 rounded-none font-display font-black uppercase text-sm">
+          <Button onClick={() => setShowConfirm(true)} variant="outline" className="brutal-btn-ghost border-destructive text-destructive shadow-[4px_4px_0px_0px_#ef4444] px-6 py-3 h-auto rounded-none font-display font-black uppercase text-sm hover:text-white hover:bg-destructive hover:border-destructive hover:shadow-none">
             Sign Out
-          </button>
+          </Button>
         ) : (
           <div className="space-y-3">
             <p className="font-mono text-sm opacity-70">Are you sure you want to sign out?</p>
             <div className="flex gap-3">
-              <button onClick={handleLogout} className="brutal-btn bg-destructive border-destructive px-6 py-3 rounded-none text-sm">Yes, Sign Out</button>
-              <button onClick={() => setShowConfirm(false)} className="brutal-btn-ghost px-6 py-3 rounded-none text-sm">Cancel</button>
+              <Button onClick={handleLogout} className="brutal-btn bg-destructive border-destructive px-6 py-3 h-auto rounded-none text-sm hover:bg-destructive/90">Yes, Sign Out</Button>
+              <Button onClick={() => setShowConfirm(false)} variant="outline" className="brutal-btn-ghost px-6 py-3 h-auto rounded-none text-sm">Cancel</Button>
             </div>
           </div>
         )}

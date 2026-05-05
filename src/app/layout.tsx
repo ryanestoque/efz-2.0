@@ -7,6 +7,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -51,6 +52,7 @@ export default function RootLayout({
             </Suspense>
             <main className="flex-grow">{children}</main>
             <Footer />
+            <Toaster />
           </CartProvider>
         </AuthProvider>
       </body>

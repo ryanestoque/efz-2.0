@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { toast } from 'sonner';
 import type { Product } from '@/lib/data';
 
 export interface CartItem extends Product {
@@ -23,6 +24,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = useCallback((product: Product) => {
+    toast.success(`${product.name} added to cart!`);
     setItems(prev => {
       const existing = prev.find(item => item.id === product.id);
       if (existing) {
@@ -37,12 +39,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeItem = useCallback((productId: number) => {
-    setItems(prev => prev.filter(item => item.id !== productId));
+    setItems(prev => {
+      const item = prev.find(i => i.id === productId);
+      if (item) toast.success(`${item.name} removed from cart.`);
+      return prev.filter(i => i.id !== productId);
+    });
   }, []);
 
   const updateQuantity = useCallback((productId: number, quantity: number) => {
     if (quantity <= 0) {
-      setItems(prev => prev.filter(item => item.id !== productId));
+      setItems(prev => {
+        const item = prev.find(i => i.id === productId);
+        if (item) toast.success(`${item.name} removed from cart.`);
+        return prev.filter(i => i.id !== productId);
+      });
       return;
     }
     setItems(prev =>
