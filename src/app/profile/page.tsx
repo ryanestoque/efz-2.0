@@ -160,7 +160,7 @@ function ProfileTab() {
   };
 
   return (
-    <div className="space-y-12 max-w-lg">
+    <div className="space-y-12">
       <form onSubmit={handleSave} className="space-y-6">
       {/* Static info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -200,8 +200,8 @@ function ProfileTab() {
         ))}
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button type="submit" className="brutal-btn px-8 py-3 h-auto rounded-none">Save Changes</Button>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <Button type="submit" className="brutal-btn w-full sm:w-auto px-12 py-4 h-auto rounded-none">Save Changes</Button>
         {saved && (
           <div className="flex items-center gap-2 text-[#34C759]">
             <CheckCircle2 className="h-4 w-4" />
@@ -226,11 +226,11 @@ function ProfileTab() {
             <label className="font-display font-bold text-xs uppercase tracking-widest opacity-60">Confirm New Password</label>
             <input type={showPw ? 'text' : 'password'} required value={pwForm.confirm} onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))} className="brutal-input w-full" />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-2">
             <label className="flex items-center gap-2 cursor-pointer font-mono text-sm opacity-80 hover:opacity-100">
               <input type="checkbox" checked={showPw} onChange={e => setShowPw(e.target.checked)} className="accent-primary" /> Show passwords
             </label>
-            <Button type="submit" className="brutal-btn px-6 py-2 h-auto rounded-none text-sm">Update Password</Button>
+            <Button type="submit" className="brutal-btn w-full sm:w-auto px-10 py-4 h-auto rounded-none text-sm">Update Password</Button>
           </div>
         </form>
       </div>
@@ -249,7 +249,7 @@ function OrdersTab() {
           <p className="font-display font-bold text-xl uppercase">No orders yet</p>
           <p className="font-mono text-sm opacity-60 mt-1">Start shopping to see your orders here</p>
         </div>
-      ) : orders.map(order => {
+      ) : [...orders].reverse().map(order => {
         const s = STATUS_STYLE[order.status];
         return (
           <div key={order.id} className="brutal-border brutal-shadow bg-[var(--bg)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
@@ -309,7 +309,7 @@ function SettingsTab() {
   };
 
   return (
-    <div className="space-y-6 max-w-lg">
+    <div className="space-y-6">
       <div className="brutal-border p-6 space-y-4">
         <h3 className="font-display font-black text-lg uppercase tracking-tight border-b-3 border-[var(--border)] pb-3">Notifications</h3>
         {[
@@ -334,15 +334,15 @@ function SettingsTab() {
       <div className="brutal-border p-6 space-y-4 border-destructive">
         <h3 className="font-display font-black text-lg uppercase tracking-tight text-destructive border-b-3 border-destructive pb-3">Danger Zone</h3>
         {!showConfirm ? (
-          <Button onClick={() => setShowConfirm(true)} variant="outline" className="brutal-btn-ghost border-destructive text-destructive shadow-[4px_4px_0px_0px_#ef4444] px-6 py-3 h-auto rounded-none font-display font-black uppercase text-sm hover:text-white hover:bg-destructive hover:border-destructive hover:shadow-none">
+          <Button onClick={() => setShowConfirm(true)} variant="outline" className="brutal-btn-ghost w-full border-destructive text-destructive shadow-[4px_4px_0px_0px_#ef4444] px-6 py-4 h-auto rounded-none font-display font-black uppercase text-sm hover:text-white hover:bg-destructive hover:border-destructive hover:shadow-none">
             Sign Out
           </Button>
         ) : (
           <div className="space-y-3">
             <p className="font-mono text-sm opacity-70">Are you sure you want to sign out?</p>
             <div className="flex gap-3">
-              <Button onClick={handleLogout} className="brutal-btn bg-destructive border-destructive px-6 py-3 h-auto rounded-none text-sm hover:bg-destructive/90">Yes, Sign Out</Button>
-              <Button onClick={() => setShowConfirm(false)} variant="outline" className="brutal-btn-ghost px-6 py-3 h-auto rounded-none text-sm">Cancel</Button>
+              <Button onClick={handleLogout} className="brutal-btn bg-destructive border-destructive w-full py-4 h-auto rounded-none text-sm hover:bg-destructive/90">Yes, Sign Out</Button>
+              <Button onClick={() => setShowConfirm(false)} variant="outline" className="brutal-btn-ghost w-full py-4 h-auto rounded-none text-sm">Cancel</Button>
             </div>
           </div>
         )}
