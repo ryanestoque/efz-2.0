@@ -336,7 +336,7 @@ export default function ContactPage() {
                 EFZ Bldg. Iñigo Street
               </p>
               <p className="font-mono text-sm opacity-70">
-                Bo. Obero, Brgy 18-B Poblacion<br />
+                Bo. Obrero, Brgy 18-B Poblacion<br />
                 Davao City, Philippines 8000
               </p>
               <span className="font-display font-bold text-xs uppercase tracking-widest text-primary mt-2 group-hover:underline">
