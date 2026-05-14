@@ -7,12 +7,18 @@ export function Newsletter() {
         <div className="max-w-2xl mx-auto text-center space-y-8">
           <h2 className="font-display font-black text-6xl tracking-tighter uppercase">Stay Upgraded.</h2>
           <p className="text-lg opacity-80 font-medium">Want to get the latest drops, restock alerts, and exclusive brutal deals?</p>
-          <form className="flex flex-col sm:flex-row gap-4 justify-center">
-            {/* <input type="email" placeholder="ENTER EMAIL ADDRESS" className="brutal-input flex-1 max-w-sm font-display uppercase tracking-widest text-sm" /> */}
-            <Button type="submit" className="brutal-btn px-8 py-6 w-full sm:w-auto rounded-none">
-              FOLLOW US ON FACEBOOK
-            </Button>
-          </form>
+          <div className="flex justify-center">
+            <a 
+              href="https://www.facebook.com/efzdavaocomputersale" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <Button className="brutal-btn px-8 py-6 w-full sm:w-auto rounded-none font-display font-black text-lg uppercase">
+                FOLLOW US ON FACEBOOK
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
     </section>
